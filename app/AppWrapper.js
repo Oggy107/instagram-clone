@@ -1,7 +1,8 @@
 import React from 'react'
 import { StyleSheet, Text, View, Platform, StatusBar, SafeAreaView } from 'react-native'
 
-import Home from './screens/Home'
+import HomeScreen from './screens/HomeScreen'
+import NewPostScreen from './screens/NewPostScreen'
 import { ThemeContext, ThemeProvider } from './components/themeContext'
 
 const darkStatusBar = () => {
@@ -25,7 +26,8 @@ const AppWrapper = () => {
 
     return (
         <SafeAreaView style={[styles.mainContainer, background]}>
-            <Home />
+            {/* <HomeScreen /> */}
+            <NewPostScreen />
         </SafeAreaView>
     )
 }

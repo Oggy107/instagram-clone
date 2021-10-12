@@ -1,0 +1,52 @@
+import React from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
+
+import bottomTabIcons from '../../assets/BottomTabIcons'
+import { ThemeContext } from '../themeContext'
+
+const BottomTabs = () => {
+    const [active, setActive] = React.useState("Home")
+    const {theme} = React.useContext(ThemeContext)
+
+    return (
+        <View style={styles.container}>
+            {
+                bottomTabIcons.map((icon, index) => {
+                    return (
+                        <TouchableOpacity key={index} onPress={() => {setActive(icon.name)}}>
+                            {
+                                icon.name === "Profile" ? <Image style={styles.profileIcon} source={{uri: active === icon.name ? icon.light.active : icon.light.inactive}}/> :
+                                theme === "dark" ? <Image style={styles.icon} source={{uri: active === icon.name ? icon.light.active : icon.light.inactive}}/> : <Image style={styles.icon} source={{uri: active === icon.name ? icon.dark.active : icon.dark.inactive}}/>
+                            }
+                        </TouchableOpacity>
+                    )
+                })
+            }
+        </View>
+    )
+}
+
+export default BottomTabs
+
+const styles = StyleSheet.create({
+    container: {
+        height: 50,
+        borderTopWidth: 0.5,
+        borderStyle: "solid",
+        borderColor: "#a8a5a2",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingRight: 10,
+        paddingLeft: 10,
+    },
+    icon: {
+        width: 30,
+        height: 30
+    },
+    profileIcon: {
+        width: 35,
+        height: 35,
+        borderRadius: 100
+    }
+})
