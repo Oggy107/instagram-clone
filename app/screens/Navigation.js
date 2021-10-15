@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native'
 
 import HomeScreen from './HomeScreen'
 import NewPostScreen from './NewPostScreen'
+import ProfileScreen from './ProfileScreen'
 import LoginScreen from './LoginScreen'
 import SignupScreen from './SignupScreen'
 
@@ -20,6 +21,7 @@ export const SignedInStack = () => {
             <Stack.Navigator initialRouteName='HomeScreen' screenOptions={screenOptions}>
                 <Stack.Screen name='HomeScreen' component={HomeScreen} />
                 <Stack.Screen name='NewPostScreen' component={NewPostScreen} />
+                <Stack.Screen name='ProfileScreen' component={ProfileScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     )

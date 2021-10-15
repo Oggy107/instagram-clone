@@ -33,6 +33,7 @@ const icons = [
 
 const PostFooter = ({post}) => {
     const {theme} = React.useContext(ThemeContext)
+    const [firstUserToLike, setFirstUserToLike] = React.useState("")
 
     let getDarkIcons = theme === "dark" ? false : true
 
@@ -40,9 +41,11 @@ const PostFooter = ({post}) => {
         color: theme === "dark" ? "#fff" : "#000"
     }
 
+    db.collection('users').doc(post.likes_by_users[0]).onSnapshot((snapshot) => (setFirstUserToLike(snapshot.get('username'))))
+
     const handleLike = (post) => {
         const currentLikeStatus = !post.likes_by_users.includes(firebase.auth().currentUser.email)
-
+        
         try {
             db.collection('users').doc(post.owner_email).collection('posts').doc(post.id).update({
                 likes_by_users: currentLikeStatus ? firebase.firestore.FieldValue.arrayUnion(firebase.auth().currentUser.email) : firebase.firestore.FieldValue.arrayRemove(firebase.auth().currentUser.email)
@@ -51,12 +54,17 @@ const PostFooter = ({post}) => {
             console.log(error)
         }
     }
-
+    console.log(post.likes_by_users.length)
     return (
         <View style={styles.container}>
             <Icons getDarkIcons={getDarkIcons} post={post} handleLike={handleLike}/>
             <View>
-                <Text style={[themeStyle, {fontWeight: "bold"}]}>{post.likes_by_users.length.toLocaleString('en')} likes</Text>
+                {
+                    post.likes_by_users.length == 0 ? <Text style={[themeStyle, {fontWeight: "bold"}]}>no likes</Text> :
+                    post.likes_by_users.length == 1 ? <Text style={[themeStyle, {fontWeight: "bold"}]}>1 like by {firstUserToLike}</Text> :
+                    post.likes_by_users.length == 2 ? <Text style={[themeStyle, {fontWeight: "bold"}]}>2 likes by {firstUserToLike} and 1 other</Text> :
+                    <Text style={[themeStyle, {fontWeight: "bold"}]}>{post.likes_by_users.length.toLocaleString('en')} likes by {firstUserToLike} and {post.likes_by_users.length.toLocaleString('en') - 1} others</Text>
+                }
             </View>
             <View>
                 <Text style={themeStyle}>

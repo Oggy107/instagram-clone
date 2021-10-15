@@ -11,17 +11,9 @@ const Header = ({navigation}) => {
         theme === "dark" ? setTheme("light") : setTheme("dark")
     }
 
-    const handleSignOut = () => {
-        try {
-            firebase.auth().signOut()
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={() => {handleSignOut()}}>
+            <TouchableOpacity>
                 <Image style={styles.logo} resizeMode="contain" source={theme === "dark" ? require('../../assets/header-logo-white.png') : require('../../assets/header-logo-dark.png')}/>
             </TouchableOpacity>
             <View style={styles.iconContainer}>

@@ -5,9 +5,9 @@ import bottomTabIcons from '../../assets/BottomTabIcons'
 import { ThemeContext } from '../themeContext'
 import {firebase, db} from '../../firebase'
 
-const BottomTabs = () => {
+const BottomTabs = ({navigation}) => {
     const [active, setActive] = React.useState("Home")
-    const [profilePic, setProfilePic] = React.useState("")
+    const [profilePic, setProfilePic] = React.useState("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWeZj1SB4KzSbjx_oKlZpyrOLlEL9K9DW0JA&usqp=CAU")
     const {theme} = React.useContext(ThemeContext)
 
     const getUserProfilePic = () => {
@@ -27,7 +27,9 @@ const BottomTabs = () => {
                     return (
                         <TouchableOpacity key={index} onPress={() => {setActive(icon.name)}}>
                             {
-                                icon.name === "Profile" ? <Image style={styles.profileIcon} source={{uri: profilePic}}/> :
+                                icon.name === "Profile" ? <TouchableOpacity onPress={() => {navigation.push("ProfileScreen")}}>
+                                        <Image style={styles.profileIcon} source={{uri: profilePic}}/>
+                                    </TouchableOpacity> :
                                 theme === "dark" ? <Image style={styles.icon} source={{uri: active === icon.name ? icon.light.active : icon.light.inactive}}/> : <Image style={styles.icon} source={{uri: active === icon.name ? icon.dark.active : icon.dark.inactive}}/>
                             }
                         </TouchableOpacity>

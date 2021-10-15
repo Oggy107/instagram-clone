@@ -26,7 +26,16 @@ const LoginForm = ({navigation}) => {
         try {
             await firebase.auth().signInWithEmailAndPassword(email, password)
         } catch (error) {
-            Alert.alert(error.message)
+            Alert.alert("Error!", error.message + " \n\nsign up if you want to create new account" , [
+              {
+                text: "ok",
+                onPress: () => {}
+              },
+              {
+                text: "sign up",
+                onPress: () => {navigation.push("SignupScreen")}
+              }
+            ])
         }
     }
 
