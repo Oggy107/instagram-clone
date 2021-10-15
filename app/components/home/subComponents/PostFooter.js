@@ -3,6 +3,9 @@ import { StyleSheet, Text, View, Image } from 'react-native'
 
 import { ThemeContext } from '../../themeContext'
 
+import {firebase, db} from '../../../firebase'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+
 const icons = [
     {
         name: 'Like',
@@ -37,11 +40,23 @@ const PostFooter = ({post}) => {
         color: theme === "dark" ? "#fff" : "#000"
     }
 
+    const handleLike = (post) => {
+        const currentLikeStatus = !post.likes_by_users.includes(firebase.auth().currentUser.email)
+
+        try {
+            db.collection('users').doc(post.owner_email).collection('posts').doc(post.id).update({
+                likes_by_users: currentLikeStatus ? firebase.firestore.FieldValue.arrayUnion(firebase.auth().currentUser.email) : firebase.firestore.FieldValue.arrayRemove(firebase.auth().currentUser.email)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <View style={styles.container}>
-            <Icons getDarkIcons={getDarkIcons}/>
+            <Icons getDarkIcons={getDarkIcons} post={post} handleLike={handleLike}/>
             <View>
-                <Text style={[themeStyle, {fontWeight: "bold"}]}>{post.likes} likes</Text>
+                <Text style={[themeStyle, {fontWeight: "bold"}]}>{post.likes_by_users.length.toLocaleString('en')} likes</Text>
             </View>
             <View>
                 <Text style={themeStyle}>
@@ -59,11 +74,13 @@ const PostFooter = ({post}) => {
     )
 }
 
-const Icons = ({getDarkIcons}) => {
+const Icons = ({getDarkIcons, post, handleLike}) => {
     return (
         <View style={styles.iconContainer}>
             <View style={{flexDirection: "row"}}>
-                <Image style={styles.icon} source={{uri: getDarkIcons ? icons[0].darkUrl : icons[0].url}}/>
+                <TouchableOpacity onPress={() => {handleLike(post)}}>
+                    <Image style={styles.icon} source={{uri: post.likes_by_users.includes(firebase.auth().currentUser.email) ? icons[0].likedUrl : getDarkIcons ? icons[0].darkUrl : icons[0].url}}/>
+                </TouchableOpacity>
                 <Image style={styles.icon} source={{uri: getDarkIcons ? icons[1].darkUrl : icons[1].url}}/>
                 <Image style={styles.icon} source={{uri: getDarkIcons ? icons[2].darkUrl : icons[2].url}}/>
             </View>

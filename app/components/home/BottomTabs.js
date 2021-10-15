@@ -3,10 +3,22 @@ import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
 
 import bottomTabIcons from '../../assets/BottomTabIcons'
 import { ThemeContext } from '../themeContext'
+import {firebase, db} from '../../firebase'
 
 const BottomTabs = () => {
     const [active, setActive] = React.useState("Home")
+    const [profilePic, setProfilePic] = React.useState("")
     const {theme} = React.useContext(ThemeContext)
+
+    const getUserProfilePic = () => {
+        const user = firebase.auth().currentUser
+        const unsubscribe = db.collection('users').where('owner_uid', '==', user.uid).limit(1).onSnapshot(snapshot => snapshot.docs.map(doc => {setProfilePic(doc.data().profile_picture)}))
+        return unsubscribe
+    }
+
+    React.useEffect(() => {
+        getUserProfilePic()
+    }, [])
 
     return (
         <View style={styles.container}>
@@ -15,7 +27,7 @@ const BottomTabs = () => {
                     return (
                         <TouchableOpacity key={index} onPress={() => {setActive(icon.name)}}>
                             {
-                                icon.name === "Profile" ? <Image style={styles.profileIcon} source={{uri: active === icon.name ? icon.light.active : icon.light.inactive}}/> :
+                                icon.name === "Profile" ? <Image style={styles.profileIcon} source={{uri: profilePic}}/> :
                                 theme === "dark" ? <Image style={styles.icon} source={{uri: active === icon.name ? icon.light.active : icon.light.inactive}}/> : <Image style={styles.icon} source={{uri: active === icon.name ? icon.dark.active : icon.dark.inactive}}/>
                             }
                         </TouchableOpacity>

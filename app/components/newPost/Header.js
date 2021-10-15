@@ -1,3 +1,4 @@
+import { NavigationContainer } from '@react-navigation/native'
 import React from 'react'
 import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
@@ -8,7 +9,7 @@ const backBtn = {
     dark: "https://img.icons8.com/ios-glyphs/90/000000/back.png"
 }
 
-const Header = () => {
+const Header = ({navigation}) => {
     const {theme, setTheme} = React.useContext(ThemeContext)
 
     const themeStyle = {
@@ -17,7 +18,7 @@ const Header = () => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={{position: 'absolute', left: 10}} onPress={() => {theme === "dark" ? setTheme("light") : setTheme("dark")}}>
+            <TouchableOpacity style={{position: 'absolute', left: 10}} onPress={() => {navigation.goBack()}}>
                 <Image style={styles.btn} source={{uri: theme === "dark" ? backBtn.light : backBtn.dark}}/>
             </TouchableOpacity>
             <Text style={[themeStyle, {fontSize: 20, fontWeight: "bold"}]}>New Post</Text>

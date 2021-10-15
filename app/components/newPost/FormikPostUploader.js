@@ -2,46 +2,76 @@ import React from 'react'
 import { Image, StyleSheet, Text, TextInput, View, Button, TouchableOpacity } from 'react-native'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
+import validUrl from 'valid-url'
 
 import { ThemeContext } from '../themeContext'
+import { db, firebase } from '../../firebase'
 
 const uploadPostSchema = Yup.object().shape({
     imageUrl: Yup.string().url().required('URL is required'),
-    caption: Yup.string().max(2200, 'Caption jas reached the character limit')
+    caption: Yup.string().max(2200, 'Caption has reached the character limit')
 })
 
 const placeholderImgUrl = "https://www.brownweinraub.com/wp-content/uploads/2017/09/placeholder.jpg"
 
-const FormikPostUploader = () => {
+const FormikPostUploader = ({navigation}) => {
     return (
         <View style={styles.container}>
-            <Form/>
+            <Form navigation={navigation}/>
         </View>
     )
 }
 
-const Form = () => {
+const Form = ({navigation}) => {
     const [thumbnailUrl, setThumbnailUrl] = React.useState(placeholderImgUrl)
+    const [currentLoggedInUser, setCurrentLoggedInUser] = React.useState(null)
+
     const {theme} = React.useContext(ThemeContext)
+
+    const getUserName = () => {
+        const user = firebase.auth().currentUser
+        const unsubscribe = db.collection('users').where('owner_uid', '==', user.uid).limit(1).onSnapshot(snapshot => snapshot.docs.map(doc => {setCurrentLoggedInUser({username: doc.data().username, profilePicture: doc.data().profile_picture})}))
+        return unsubscribe
+    }
+    
+    React.useEffect(() => {
+        getUserName()
+    }, [])
+
+    const uploadPostToFire = (imageUrl, caption) => {
+        const unsubscribe = db.collection('users').doc(firebase.auth().currentUser.email).collection('posts').add({
+            imageUrl: imageUrl,
+            user: currentLoggedInUser.username,
+            profile_picture: currentLoggedInUser.profilePicture,
+            owner_uid: firebase.auth().currentUser.uid,
+            owner_email: firebase.auth().currentUser.email,
+            caption: caption,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            likes_by_users: [],
+            comments: []
+        }).then(() => navigation.goBack())
+
+        return unsubscribe
+    }
 
     const themeStyle = {
         color: theme === "dark" ? "#fff" : "#000"
     }
 
     return (
-        <Formik initialValues={{caption: '', imageUrl: ''}} onSubmit={(values) => {console.log(values); setThumbnailUrl(values.imageUrl)}} validationSchema={uploadPostSchema} validateOnMount={true}>
+        <Formik initialValues={{caption: '', imageUrl: ''}} onSubmit={(values) => {uploadPostToFire(values.imageUrl, values.caption)}} validationSchema={uploadPostSchema} validateOnMount={true}>
             {({handleBlur, handleChange, handleSubmit, values, errors, isValid}) => {
                 return (
                     <>
                         <View style={styles.minorContainer}>
-                            <Image style={styles.imagePreview} source={{uri: thumbnailUrl ? thumbnailUrl : placeholderImgUrl}}/>
+                            <Image style={styles.imagePreview} source={{uri: validUrl.isUri(thumbnailUrl) ? thumbnailUrl : placeholderImgUrl}}/>
                             <View style={styles.captionInputContainer}>
                                 <TextInput
                                     style={themeStyle}
                                     placeholder="Write a caption..."
                                     placeholderTextColor="gray"
                                     multiline
-                                    onChange={handleChange('caption')}
+                                    onChangeText={handleChange('caption')}
                                     onBlur={handleBlur('caption')}
                                     value={values.caption}
                                 />
