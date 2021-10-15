@@ -54,7 +54,7 @@ const PostFooter = ({post}) => {
             console.log(error)
         }
     }
-    console.log(post.likes_by_users.length)
+
     return (
         <View style={styles.container}>
             <Icons getDarkIcons={getDarkIcons} post={post} handleLike={handleLike}/>

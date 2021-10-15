@@ -7,26 +7,13 @@ import { db } from '../../firebase'
 
 const Posts = () => {
     const [posts, setPosts] = React.useState([])
-    const [isLoading, setIsLoading] = React.useState(true)
-
-    const getPosts = () => {
-        return new Promise((resolve, reject) => {
-            db.collectionGroup('posts').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
-                setPosts(snapshot.docs.map(doc => (
-                    {id: doc.id, ...doc.data()}
-                    )))
-            })
-            resolve()
-        })
-    }
 
     React.useEffect(() => {
-        // db.collectionGroup('posts').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
-        //     setPosts(snapshot.docs.map(doc => (
-        //         {id: doc.id, ...doc.data()}
-        //         )))
-        // })
-        getPosts().then(setIsLoading(false))
+        db.collectionGroup('posts').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
+            setPosts(snapshot.docs.map(doc => (
+                {id: doc.id, ...doc.data()}
+                )))
+        })
     }, [])
     
     return (
