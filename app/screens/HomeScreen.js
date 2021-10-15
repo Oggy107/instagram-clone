@@ -19,7 +19,7 @@ const HomeScreen = ({navigation}) => {
             <Header navigation={navigation}/>
             <Stories />
             <Posts />
-            <BottomTabs />
+            <BottomTabs navigation={navigation}/>
         </View>
     )
 }

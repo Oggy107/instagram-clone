@@ -9,7 +9,7 @@ const backBtn = {
 }
 
 const Header = ({navigation}) => {
-    const {theme, setTheme} = React.useContext(ThemeContext)
+    const {theme} = React.useContext(ThemeContext)
 
     const themeStyle = {
         color: theme === "dark" ? "#fff" : "#000"
@@ -20,7 +20,7 @@ const Header = ({navigation}) => {
             <TouchableOpacity style={{position: 'absolute', left: 10}} onPress={() => {navigation.goBack()}}>
                 <Image style={styles.btn} source={{uri: theme === "dark" ? backBtn.light : backBtn.dark}}/>
             </TouchableOpacity>
-            <Text style={[themeStyle, {fontSize: 20, fontWeight: "bold"}]}>New Post</Text>
+            <Text style={[themeStyle, {fontSize: 20, fontWeight: "bold"}]}>Your Profile</Text>
         </View>
     )
 }
