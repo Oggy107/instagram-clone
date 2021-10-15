@@ -1,33 +1,30 @@
 import React from 'react'
 import { StyleSheet, Text, View, Platform, StatusBar, SafeAreaView } from 'react-native'
 
-import HomeScreen from './screens/HomeScreen'
-import NewPostScreen from './screens/NewPostScreen'
-import { ThemeContext, ThemeProvider } from './components/themeContext'
+import { ThemeContext } from './components/themeContext'
+import AuthNavigation from './AuthNavigation'
 
-const darkStatusBar = () => {
-    StatusBar.setBarStyle("light-content")
-    StatusBar.setBackgroundColor("#000")
-}
-
-const lightStatusBar = () => {
-    StatusBar.setBarStyle("dark-content")
-    StatusBar.setBackgroundColor("#fff")
+const setStatusbarStyle = async (dark) => {
+    if (dark)
+    {
+        StatusBar.setBarStyle("light-content")
+        StatusBar.setBackgroundColor("#000")
+    }
+    else
+    {
+        StatusBar.setBarStyle("dark-content")
+        StatusBar.setBackgroundColor("#fff")
+    }
 }
 
 const AppWrapper = () => {
-    const {theme, setTheme} = React.useContext(ThemeContext)
+    const {theme} = React.useContext(ThemeContext)
 
-    const background = {
-        backgroundColor: theme === "dark" ? "#000" : "#fff",
-    }
-
-    theme === "dark" ? darkStatusBar() : lightStatusBar()
+    theme === "dark" ? setStatusbarStyle(true) : setStatusbarStyle(false)
 
     return (
-        <SafeAreaView style={[styles.mainContainer, background]}>
-            {/* <HomeScreen /> */}
-            <NewPostScreen />
+        <SafeAreaView style={styles.mainContainer}>
+            <AuthNavigation />
         </SafeAreaView>
     )
 }

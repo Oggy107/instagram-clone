@@ -3,15 +3,23 @@ import { StyleSheet, ScrollView, View, Image } from 'react-native'
 
 import PostHeader from './subComponents/PostHeader'
 import PostFooter from './subComponents/PostFooter'
-
-// importing dummy data
-import POSTS from '../../assets/dummyPost'
+import { db } from '../../firebase'
 
 const Posts = () => {
+    const [posts, setPosts] = React.useState([])
+
+    React.useEffect(() => {
+        db.collectionGroup('posts').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
+            setPosts(snapshot.docs.map(doc => (
+                {id: doc.id, ...doc.data()}
+                )))
+        })
+    }, [])
+
     return (
         <ScrollView style={styles.container}>
             {
-                POSTS.map((post, index) => {
+                posts.map((post, index) => {
                     return (
                         <View key={index} style={styles.postContainer}>
                             <PostHeader post={post}/>

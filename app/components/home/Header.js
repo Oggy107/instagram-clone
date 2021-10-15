@@ -2,17 +2,33 @@ import React from 'react'
 import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
 import { ThemeContext } from '../themeContext'
+import {firebase} from '../../firebase'
 
-const Header = () => {
+const Header = ({navigation}) => {
     const {theme, setTheme} = React.useContext(ThemeContext)
+
+    const toggleTheme = () => {
+        theme === "dark" ? setTheme("light") : setTheme("dark")
+    }
+
+    const handleSignOut = () => {
+        try {
+            firebase.auth().signOut()
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={() => {theme === "dark" ? setTheme("light") : setTheme("dark")}}>
+            <TouchableOpacity onPress={() => {handleSignOut()}}>
                 <Image style={styles.logo} resizeMode="contain" source={theme === "dark" ? require('../../assets/header-logo-white.png') : require('../../assets/header-logo-dark.png')}/>
             </TouchableOpacity>
             <View style={styles.iconContainer}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => {toggleTheme()}}>
+                    <Image style={styles.icon} source={{uri: theme === "dark" ? "https://img.icons8.com/material/60/ffffff/bright-moon.png" : "https://img.icons8.com/material-outlined/60/000000/bright-moon.png"}}/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {navigation.push('NewPostScreen')}}>
                     <Image style={styles.icon} source={{uri: theme === "dark" ? "https://img.icons8.com/fluency-systems-regular/60/ffffff/plus-2-math.png" : "https://img.icons8.com/fluency-systems-regular/60/000000/plus-2-math.png"}}/>
                 </TouchableOpacity>
                 <TouchableOpacity>
@@ -46,7 +62,7 @@ const styles = StyleSheet.create({
         height: "100%",
     },
     iconContainer: {
-        width: 110,
+        width: 140,
         flexDirection: "row",
         justifyContent: "space-between",
     },

@@ -14,9 +14,9 @@ const PostHeader = ({post}) => {
         <View style={styles.container}>
             <View style={{flexDirection: "row", alignItems: "center"}}>
                 <View style={styles.profilePicContainer}>
-                    <Image style={styles.profilePic} source={{uri: post.profilePic}}/>
+                    <Image style={styles.profilePic} source={{uri: post.profile_picture}}/>
                 </View>
-                <Text style={[{fontWeight: "bold"}, themeStyle]}>{post.user}</Text>
+                <Text style={[{fontWeight: "bold", paddingLeft: 5}, themeStyle]}>{post.user}</Text>
             </View>
             <View>
                 <Text style={[themeStyle, {fontSize: 25}]}>...</Text>
